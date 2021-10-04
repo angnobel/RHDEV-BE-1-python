@@ -23,46 +23,65 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
+def checkMember(target, memberStatus):
+    # params:
+    # target(str): person to check member status of
+    # memberStatus(dict): dictionary of membership statuses
+    if target in memberStatus.keys():
+        return memberStatus[target]
+    return False
+
+def totalPrice(tickets):
+    # params:
+    # tickets(list): contains list of ticket instances
+    try:
+        total = 0.0
+        for i in tickets:
+            if not isinstance(i, dict):
+                raise ValueError
+            if "price" not in i.keys():
+                raise KeyError
+            total += i["price"]
+
+        return total
+
+    except ValueError:
+        return None
+    except KeyError:
+        return None
+
+def checkPrice(isMember):
+    try:
+        if isMember:
+            return 3.50
+        return 5.00
+    except:
+        return None
+
 
 def processRequest(request):
     try:
         if "applicants" not in request.keys() or len(request["applicants"]) == 0:
             raise ValueError
-    except:
-        return {"error": "No applicants"}
 
-    # create result dictionary to return and process each applicant in request
-    result = {"successfulApplicants": [], "bannedApplicants": [], "totalCost": 0, "tickets": []}
-    for i in request["applicants"]:
+        result = {"successfulApplicants": [], "bannedApplicants": [], "tickets": []}
 
-        # filter through banned visitors
-        if i in bannedVisitors:
-            result["bannedApplicants"].append(i)
+        # filter out banned and non-banned applicants
+        result["bannedApplicants"] = list(filter(lambda x: x in bannedVisitors, request["applicants"]))
+        result["successfulApplicants"] = list(filter(lambda x: x not in bannedVisitors, request["applicants"]))
 
-        else:
-            result["successfulApplicants"].append(i)
-
-            # temporary instance of ticket dictionary
-            tmp = {"name": i}        
-
-            # determine membership status of successful applicants
-            if i in memberStatus.keys():
-                tmp["membershipStatus"] = memberStatus[i]
-            else:
-                tmp["membershipStatus"] = False
-
-            # calculate price of ticket and add to total cost
-            if tmp["membershipStatus"]:
-                tmp["price"] = 3.50
-            else:
-                tmp["price"] = 5.00
-            result["totalCost"] += tmp["price"]
-
-            # add current ticket instance to result dictionary
+        # generate tickets based on successful applicants
+        for i in result["successfulApplicants"]:
+            tmp = {"name": i, "membershipStatus": checkMember(i, memberStatus)}
+            tmp["price"] = checkPrice(tmp["membershipStatus"])
             result["tickets"].append(tmp)
 
-    return result
+        # calculate total cost based on generated tickets
+        result["totalCost"] = totalPrice(result["tickets"])
+        return result
 
+    except ValueError:
+        return {"error": "No applicants"}   
 
 print(processRequest(request))
 
