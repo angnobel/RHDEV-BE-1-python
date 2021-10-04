@@ -25,8 +25,43 @@ request = {
 
 
 def processRequest(request):
-    # Your code here
-    return
+    try:
+        if "applicants" not in request.keys() or len(request["applicants"]) == 0:
+            raise ValueError
+    except:
+        return {"error": "No applicants"}
+
+    # create result dictionary to return and process each applicant in request
+    result = {"successfulApplicants": [], "bannedApplicants": [], "totalCost": 0, "tickets": []}
+    for i in request["applicants"]:
+
+        # filter through banned visitors
+        if i in bannedVisitors:
+            result["bannedApplicants"].append(i)
+
+        else:
+            result["successfulApplicants"].append(i)
+
+            # temporary instance of ticket dictionary
+            tmp = {"name": i}        
+
+            # determine membership status of successful applicants
+            if i in memberStatus.keys():
+                tmp["membershipStatus"] = memberStatus[i]
+            else:
+                tmp["membershipStatus"] = False
+
+            # calculate price of ticket and add to total cost
+            if tmp["membershipStatus"]:
+                tmp["price"] = 3.50
+            else:
+                tmp["price"] = 5.00
+            result["totalCost"] += tmp["price"]
+
+            # add current ticket instance to result dictionary
+            result["tickets"].append(tmp)
+
+    return result
 
 
 print(processRequest(request))
