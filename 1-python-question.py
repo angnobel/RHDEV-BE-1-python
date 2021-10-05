@@ -47,6 +47,8 @@ def processRequest(request):
     result["totalCost"] = 0
     result["tickets"] = []
 
+    if len(applicant_list) == 0:
+        raise Exception("Applicant List is empty")
     for applicant in applicant_list:
         if applicant not in result["bannedApplicants"]:
             result["successfulApplicants"].append(applicant)
