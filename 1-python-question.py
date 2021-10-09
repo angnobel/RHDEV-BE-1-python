@@ -25,8 +25,51 @@ request = {
 
 
 def processRequest(request):
-    # Your code here
-    return
+
+    class EmptyApplicantsException(Exception):
+        pass
+
+    try:
+        applicants = request["applicants"]
+        if len(applicants) == 0:
+            raise EmptyApplicantsException
+    except EmptyApplicantsException:
+        return {"error": "No applicants"}
+
+    to_return = {}
+
+    successfulApplicants = list(filter(lambda x: x if x not in bannedVisitors else None, applicants ))
+    bannedApplicants = list(filter(lambda x: x if x in bannedVisitors else None, applicants ))
+
+    #find prices
+    member_tickets = []
+    total_price = 0 
+    for i in successfulApplicants:
+        try:
+            member = memberStatus[i]
+        except KeyError:
+            member = False
+        
+        if member:
+            price = 3.50
+        else:
+            price = 5
+
+        ticket = {
+            "name" : i,
+            "membershipStatus" : member,
+            "price" : price,
+        }
+
+        member_tickets.append(ticket)
+        total_price += price
+    
+    to_return["successfulApplicants"] = successfulApplicants
+    to_return["bannedApplicants"] = bannedApplicants
+    to_return["totalCost"] = total_price
+    to_return["tickets"] = member_tickets
+
+    return to_return
 
 
 print(processRequest(request))
