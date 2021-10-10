@@ -23,10 +23,41 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
+def initOutputFormat():
+    output={
+        "successfulApplicants":[],
+        "bannedApplicants":[],
+        "totalCost":0,
+        "tickets":[],
+    }
+    return output
+
+def banFilter(app, output):
+    if app in bannedVisitors:
+        output['bannedApplicants'].append(app)
+        return True
+    return False
+
+def ticketProcessing(app, output):
+    ticket={
+        "name": app,
+        "membershipStatus": memberStatus.get(app, False),
+        "price": 3.5 if memberStatus.get(app, False) else 5
+    }
+    output['tickets'].append(ticket)
+    output['successfulApplicants'].append(app)
+    output['totalCost']+=ticket['price']
 
 def processRequest(request):
-    # Your code here
-    return
+    if len(request["applicants"])==0:
+        return {"error": "No applicants"}
+    output = initOutputFormat()
+    for app in request["applicants"]:
+        if banFilter(app, output):
+            continue
+        ticketProcessing(app, output)
+    
+    return output
 
 
 print(processRequest(request))
