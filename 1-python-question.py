@@ -23,17 +23,49 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
-
 def processRequest(request):
-    # Your code here
-    return
+    try:
+        if "applicants" not in request.keys() or len(request["applicants"]) == 0:
+            raise ValueError
+
+        output = {"successfulApplicants" : [], "bannedApplicants" : [], "totalCost" : [], "tickets" : [],}
+
+        #filter out banned applicants
+        output["bannedApplicants"] = list(filter(lambda x: x in bannedVisitors, request["applicants"]))
+        #filter out successful applicants
+        output["successfulApplicants"] = list(filter(lambda x: x not in bannedVisitors, request["applicants"]))
+
+        #check total cost
+        totalCost = 0.0
+        for i in output["successfulApplicants"]:
+            if memberStatus[i] == True:
+                totalCost += 3.50
+            else:
+                totalCost += 5
+        output["totalCost"].append(totalCost)
+
+        #checks tickets
+        ticket = {"name": [],"membershipStatus":[],"price":[]}
+        for i in output["successfulApplicants"]:
+            ticket["name"].append(i)
+            if memberStatus[i] == True:
+                ticket["membershipStatus"].append("True")
+                ticket["price"].append("3.50")
+            else:
+                ticket["membershipStatus"].append("False")
+                ticket["price"].append("5.00")
+        return output
+            
+    except:
+        return {"error": "No applicants"}
+
 
 
 print(processRequest(request))
 
 # {
 #   successfulApplicants:
-#   bannedApplicatns:
+#   bannedApplicants:
 #   totalCost:
 #   tickets: [
 #       {
