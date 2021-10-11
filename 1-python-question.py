@@ -49,16 +49,17 @@ def ticketProcessing(app, output):
     output['totalCost']+=ticket['price']
 
 def processRequest(request):
-    if len(request["applicants"])==0:
-        return {"error": "No applicants"}
-    output = initOutputFormat()
-    for app in request["applicants"]:
-        if banFilter(app, output):
-            continue
-        ticketProcessing(app, output)
-    
-    return output
-
+    try:
+        if len(request["applicants"])==0:
+            raise Exception({"error": "No applicants"})
+        output = initOutputFormat()
+        for app in request["applicants"]:
+            if banFilter(app, output):
+                continue
+            ticketProcessing(app, output)
+        return output
+    except Exception as e:
+        return e
 
 print(processRequest(request))
 
