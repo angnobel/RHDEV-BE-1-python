@@ -25,8 +25,57 @@ request = {
 
 
 def processRequest(request):
-    # Your code here
-    return
+    if(len(request["applicants"]) <= 0):
+        return {"error": "No applicants"}
+        
+    
+    #Q1
+    def checkIfBanned(person):
+        for bannedPerson in bannedVisitors:
+            if person == bannedPerson:
+                return False
+        return True
+    
+    successfulApplicants = list(filter(checkIfBanned, request["applicants"]))
+    
+    #Q2
+    def checkIfMember(person): 
+        if person in memberStatus:
+            return memberStatus[person]
+        return False
+    
+    memberList = list(filter(checkIfMember, successfulApplicants))
+    
+    #Q3
+    def calculateTotalPrice():
+        numberOfMembers = len(memberList)
+        remainingPeople = len(successfulApplicants) - numberOfMembers 
+        return numberOfMembers * 3.5 + remainingPeople * 5
+    
+    totalCost = calculateTotalPrice()
+
+    #Q4
+    def createDictForPerson(name, status, price):
+        return {
+            "name": name,
+            "membershipStatus": status,
+            "price": price
+        }
+    tickets = []
+    for onePerson in memberList:
+        tickets.append(createDictForPerson(onePerson, "member", 3.5))
+    for onePerson in successfulApplicants:
+        if (onePerson not in memberList):
+            tickets.append(createDictForPerson(onePerson, "non-member", 5))
+
+        
+
+    return {
+        "successfulApplicants": successfulApplicants,
+        "totalCost": totalCost,
+        "tickets": tickets
+    }
+    
 
 
 print(processRequest(request))
