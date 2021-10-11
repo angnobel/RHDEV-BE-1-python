@@ -12,8 +12,8 @@
 # Complete everything above in a function called processRequest
 # Your should abstract out function as much as reasonably possible
 
-bannedVisitors = ["Amy", "Grace", "Bruce"]
-memberStatus = {
+banned_visitors = ["Amy", "Grace", "Bruce"]
+member_status = {
     "Ally": True,
     "David": True,
     "Brendan": False
@@ -23,13 +23,50 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
+def CheckBannedVisitors(applicant):
+    for banned_visitor in banned_visitors:
+        return banned_visitor == applicant
 
-def processRequest(request):
-    # Your code here
-    return
+def CheckSuccessfulApplicants(applicant):
+    for banned_visitor in banned_visitors:
+        return banned_visitor != applicant
 
+def Ticket(applicant):
+    membership_status = (applicant in member_status) and (member_status[applicant]==True)
+    if membership_status == True:
+        price = 5
+    else:
+        price = 3.50
+    ticket = {
+        "name": applicant,
+        "membershipStatus": membership_status,
+        "price": price,
+    }
+    return ticket
 
-print(processRequest(request))
+def ProcessRequest(request):
+    try:
+        if request["applicants"] == []:
+            raise ValueError("No applicants found!")
+        successful_applicants = list(filter(CheckSuccessfulApplicants, request['applicants']))
+        banned_applicants = list(filter(CheckBannedVisitors, request['applicants']))
+        total_cost = 0
+        ticket_list = []
+        for applicant in successful_applicants:
+            ticket = Ticket(applicant)
+            total_cost += ticket["price"]
+            ticket_list.append(ticket)
+        result = {
+                "successfulApplicants" : successful_applicants,
+                "bannedApplicants" : banned_applicants,
+                "totalCost": total_cost,
+                "tickets": ticket_list,
+        }
+        return result
+    except ValueError as err:
+        return err
+
+print(ProcessRequest(request))
 
 # {
 #   successfulApplicants:
@@ -49,3 +86,5 @@ print(processRequest(request))
 # OR
 
 # {"error": "No applicants"}
+
+
