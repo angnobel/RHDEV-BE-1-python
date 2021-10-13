@@ -25,8 +25,27 @@ request = {
 
 
 def processRequest(request):
-    # Your code here
-    return
+    try:
+        if 'applicants' not in request or len(request['applicants'])==0:
+            raise ValueError
+    except:
+        return {'error':'empty'}
+    v=5
+    m=3.5
+    banned=list(filter(lambda b:b if b in bannedVisitors else None,request['applicants']))
+    allowed=list(filter(lambda s:s if s not in bannedVisitors else None,request['applicants']))
+    output={'successfulApplicants':allowed,'bannedVisitors':banned,'TotalCost':0,'tickets':[]}
+    for i in allowed:
+        iprice=0
+        if i not in memberStatus:
+            memberStatus[i]=False
+        if memberStatus[i]==True:
+            iprice+=3.5
+        else:
+            iprice=5
+        output['TotalCost']+=iprice
+        output['tickets']+=[{'name':i,'membershipStatus':memberStatus[i],'price':iprice}]
+    return output
 
 
 print(processRequest(request))
