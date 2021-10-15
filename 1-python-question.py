@@ -25,56 +25,71 @@ request = {
 
 
 def processRequest(request):
+    # Old Q5 (Did not satisfy requirements)
     if(len(request["applicants"]) <= 0):
         return {"error": "No applicants"}
+    
+    # New Q5 Return an error via thrown exception if applicants is empty    
+    
+    try:
+        #Q1 (Did not satisfy Requirements)
+        def checkIfBanned(person):
+            for bannedPerson in bannedVisitors:
+                if person == bannedPerson:
+                    return False
+            return True
         
-    
-    #Q1
-    def checkIfBanned(person):
-        for bannedPerson in bannedVisitors:
-            if person == bannedPerson:
-                return False
-        return True
-    
-    successfulApplicants = list(filter(checkIfBanned, request["applicants"]))
-    
-    #Q2
-    def checkIfMember(person): 
-        if person in memberStatus:
-            return memberStatus[person]
-        return False
-    
-    memberList = list(filter(checkIfMember, successfulApplicants))
-    
-    #Q3
-    def calculateTotalPrice():
-        numberOfMembers = len(memberList)
-        remainingPeople = len(successfulApplicants) - numberOfMembers 
-        return numberOfMembers * 3.5 + remainingPeople * 5
-    
-    totalCost = calculateTotalPrice()
+        successfulApplicants = list(filter(checkIfBanned, request["applicants"]))
+        
+        # New Q1 Identify all banned visitors with a filter call
+        def checkIfBanned2(person):
+            for bannedPerson in bannedVisitors:
+                if person == bannedPerson:
+                    return True
+            return False
+        
+        bannedApplicants = list(filter(checkIfBanned2, request["applicants"]))
 
-    #Q4
-    def createDictForPerson(name, status, price):
+        #Q2
+        def checkIfMember(person): 
+            if person in memberStatus:
+                return memberStatus[person]
+            return False
+        
+        memberList = list(filter(checkIfMember, successfulApplicants))
+        
+        #Q3
+        def calculateTotalPrice():
+            numberOfMembers = len(memberList)
+            remainingPeople = len(successfulApplicants) - numberOfMembers 
+            return numberOfMembers * 3.5 + remainingPeople * 5
+        
+        totalCost = calculateTotalPrice()
+
+        #Q4
+        def createDictForPerson(name, status, price):
+            return {
+                "name": name,
+                "membershipStatus": status,
+                "price": price
+            }
+        tickets = []
+        for onePerson in memberList:
+            tickets.append(createDictForPerson(onePerson, "member", 3.5))
+        for onePerson in successfulApplicants:
+            if (onePerson not in memberList):
+                tickets.append(createDictForPerson(onePerson, "non-member", 5))
+
+            
+
         return {
-            "name": name,
-            "membershipStatus": status,
-            "price": price
+            "successfulApplicants": successfulApplicants,
+            "bannedApplicants": bannedApplicants,
+            "totalCost": totalCost,
+            "tickets": tickets
         }
-    tickets = []
-    for onePerson in memberList:
-        tickets.append(createDictForPerson(onePerson, "member", 3.5))
-    for onePerson in successfulApplicants:
-        if (onePerson not in memberList):
-            tickets.append(createDictForPerson(onePerson, "non-member", 5))
-
-        
-
-    return {
-        "successfulApplicants": successfulApplicants,
-        "totalCost": totalCost,
-        "tickets": tickets
-    }
+    except:
+        return {"error": "No applicants"}
     
 
 
