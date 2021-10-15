@@ -23,29 +23,61 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
+allapplicants = request["applicants"]
 
 def processRequest(request):
-    # Your code here
-    return
+
+    result =  {
+   "successfulApplicants": [],
+   "bannedApplicants": [],
+   "totalCost": 0,
+   "tickets": []
+
+ }
+
+   # 1. filter call banned visitors
+  
+    if (not(len(allapplicants) == 0)):
+       def checkBan(i):
+          return (i in bannedVisitors is True)
+
+       result["bannedApplicants"] = list(filter(checkBan, allapplicants))
+   
+   # 2. check applicants' membership status
+       def checkMember(i):
+          if (i in allapplicants):
+              return memberStatus[i] == True
+
+       def checkVisitor(i):
+          if (not(i in allapplicants)):
+              return memberStatus[i] == False
+
+       Members = list(filter(checkMember, allapplicants))
+       Visitors = list(filter(checkVisitor, allapplicants))
+       result["successfulApplicants"] = Members + Visitors
+       
+   # 3. calculate total price
+       totalprice = len(Members) * 3.50 + len(Visitors) * 5.00
+       totalpricedisplay = "$" + str(totalprice)
+       result["totalCost"] = totalpricedisplay
+  
+       ticket = result["tickets"]
+   # 4. issue tickets
+       if (i in Members): 
+           ticket.append({"name": i, "membershipStatus": "Member", "price": "$3.50"})
+      
+       if (i in Visitors):
+           ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
+
+   # 5. throw error if applicant is empty
+       try:
+          error =  {"error": "No applicants"}
+          if len(allapplicants) == 0:
+              raise EmptyApplicant(error)
+       except EmptyApplicant:
+            return error
+    
+    return result
 
 
 print(processRequest(request))
-
-# {
-#   successfulApplicants:
-#   bannedApplicatns:
-#   totalCost:
-#   tickets: [
-#       {
-#            "name": ,
-#            "membershipStatus": ,
-#            "price":
-#       }, ....
-#   ]
-#
-# }
-
-
-# OR
-
-# {"error": "No applicants"}
