@@ -1,20 +1,21 @@
-from os import error
+
 request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
+bannedVisitors = ["Amy", "Grace", "Bruce"]
+
+
+memberStatus = {
+  "Ally": True,
+  "David": True,
+  "Brendan": False
+  }
 def processRequest(request):
-  class namaewa(Exception):
-    pass
   try:
-    bannedVisitors = ["Amy", "Grace", "Bruce"]
-    memberStatus = {
-      "Ally": True,
-      "David": True,
-      "Brendan": False
-    }
+
     if request["applicants"] == []:
-      raise namaewa
+      raise ValueError
     Removednames = set(request["applicants"]).intersection(bannedVisitors)
     Removednames = list(Removednames)
     if Removednames:
@@ -43,10 +44,9 @@ def processRequest(request):
                     "tickets": ticket_list 
                   }
     return ticket_dict
-  except namaewa as e:
+  except ValueError as e:
     return {"error" : "No applicants"}
-  except Exception as e:
-    return "ooops something went wrong "
+
 
 print(processRequest(request))
 
