@@ -24,28 +24,59 @@ request = {
 }
 
 
+
+
+def OutputFormat():
+    output={
+        "successfulApplicants": [],
+        "bannedApplicants": [],
+        "totalCost": 0,
+        "tickets": [],
+    }
+    return output
+
+def Banned(app, output):
+    if app in bannedVisitors:
+        output[Banned].append(app)
+        return True
+    return False
+
+def Ticket(app, output):
+    ticket={
+        "name": app,
+        "membershipStatus": memberStatus.get(app, False),
+        "price": 3.5 if memberStatus.get(app, False) else 5
+    }
+    output['tickets'].append(ticket)
+    output['successfulApplicants'].append(app)
+    output['totalCost']+=ticket['price']
+
+
 def processRequest(request):
-    # Your code here
-    return
+    if len(request["applicants"]) == 0:
+        return{"Error":"No Applicants"}
+    output = OutputFormat
+    for app in request["applicants"]:
+        if Banned(app, output):
+            continue
+        Ticket(app, output)
+
+    return output
+
+
+
+    try:
+        if len(request["applicants"])==0:
+            raise Exception({"Error": "No Applicants"})
+        output = OutputFormat()
+        for app in request["applicants"]:
+            if Banned(app, output):
+                continue
+            Ticket(app, output)
+        return output
+    except Exception as e:
+        return "Oops something went wrong"
+    
 
 
 print(processRequest(request))
-
-# {
-#   successfulApplicants:
-#   bannedApplicatns:
-#   totalCost:
-#   tickets: [
-#       {
-#            "name": ,
-#            "membershipStatus": ,
-#            "price":
-#       }, ....
-#   ]
-#
-# }
-
-
-# OR
-
-# {"error": "No applicants"}
