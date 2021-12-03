@@ -75,9 +75,9 @@ def processRequest(request):
             ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
 
    # 5. throw error if applicant is empty
-    elif len(allapplicants) == 0:
+    elif (len(allapplicants) == 0):
         error =  {"error": "No applicants"}
-        raise EmptyApplicant(error)
+        return error
        
     
     return result
