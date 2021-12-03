@@ -39,18 +39,18 @@ def processRequest(request):
   
     if (not(len(allapplicants) == 0)):
        def checkBan(i):
-          return (i in bannedVisitors is True)
+          return ((i in bannedVisitors) is True)
 
        result["bannedApplicants"] = list(filter(checkBan, allapplicants))
    
    # 2. check applicants' membership status
        def checkMember(i):
           if (i in allapplicants):
-              return memberStatus[i] == True
+              return memberStatus.get(str(i)) == True
 
        def checkVisitor(i):
           if (not(i in allapplicants)):
-              return memberStatus[i] == False
+              return memberStatus.get(str(i)) == False
 
        Members = list(filter(checkMember, allapplicants))
        Visitors = list(filter(checkVisitor, allapplicants))
@@ -63,11 +63,11 @@ def processRequest(request):
   
        ticket = result["tickets"]
    # 4. issue tickets
-       if (i in Members): 
-           ticket.append({"name": i, "membershipStatus": "Member", "price": "$3.50"})
+       for i in Members:
+            ticket.append({"name": i, "membershipStatus": "Member", "price": "$3.50"})
       
-       if (i in Visitors):
-           ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
+       for i in Visitors:
+            ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
 
    # 5. throw error if applicant is empty
        try:
@@ -75,7 +75,7 @@ def processRequest(request):
           if len(allapplicants) == 0:
               raise EmptyApplicant(error)
        except EmptyApplicant:
-            return error
+              return error
     
     return result
 
