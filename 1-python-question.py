@@ -39,21 +39,26 @@ def processRequest(request):
   
     if (not(len(allapplicants) == 0)):
        def checkBan(i):
-          return ((i in bannedVisitors) is True)
+          return ((i in bannedVisitors) == True)
+       
 
        result["bannedApplicants"] = list(filter(checkBan, allapplicants))
    
    # 2. check applicants' membership status
+       def checkAllow(i):
+           return ((i in bannedVisitors) == False)
+
+       allowedVisitors = list(filter(checkAllow, allapplicants))
+
        def checkMember(i):
-          if (i in allapplicants):
               return memberStatus.get(str(i)) == True
 
        def checkVisitor(i):
-          if (not(i in allapplicants)):
-              return memberStatus.get(str(i)) == False
+              return memberStatus.get(str(i)) == False or (not(i in memberStatus.keys()))
+        
 
-       Members = list(filter(checkMember, allapplicants))
-       Visitors = list(filter(checkVisitor, allapplicants))
+       Members = list(filter(checkMember, allowedVisitors))
+       Visitors = list(filter(checkVisitor, allowedVisitors))
        result["successfulApplicants"] = Members + Visitors
        
    # 3. calculate total price
@@ -70,12 +75,10 @@ def processRequest(request):
             ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
 
    # 5. throw error if applicant is empty
-       try:
-          error =  {"error": "No applicants"}
-          if len(allapplicants) == 0:
-              raise EmptyApplicant(error)
-       except EmptyApplicant:
-              return error
+    elif len(allapplicants) == 0:
+        error =  {"error": "No applicants"}
+        raise EmptyApplicant(error)
+       
     
     return result
 
