@@ -56,7 +56,7 @@ def processRequest(request):
               return memberStatus.get(str(visitor)) == True
 
        def checkVisitor(visitor):
-              return memberStatus.get(str(visitor)) == False or (not(visitor in memberStatus.keys()))
+              return memberStatus.get(str(visitor)) == False or (visitor not in memberStatus.keys())
         
 
        Members = list(filter(checkMember, allowedVisitors))
