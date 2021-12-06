@@ -23,7 +23,7 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
-allapplicants = request["applicants"]
+allApplicants = request["applicants"]
 
 def processRequest(request):
 
@@ -37,24 +37,24 @@ def processRequest(request):
 
    # 1. filter call banned visitors
   
-    if (not(len(allapplicants) == 0)):
-       def checkBan(i):
-          return i in bannedVisitors
+    if (not(len(allApplicants) == 0)):
+       def checkBan(visitor):
+          return visitor in bannedVisitors
        
 
-       result["bannedApplicants"] = list(filter(checkBan, allapplicants))
+       result["bannedApplicants"] = list(filter(checkBan, allApplicants))
    
    # 2. check applicants' membership status
-       def checkAllow(i):
-           return i not in bannedVisitors
+       def checkAllow(visitor):
+           return visitor not in bannedVisitors
 
-       allowedVisitors = list(filter(checkAllow, allapplicants))
+       allowedVisitors = list(filter(checkAllow, allApplicants))
 
-       def checkMember(i):
-              return memberStatus.get(str(i)) == True
+       def checkMember(visitor):
+              return memberStatus.get(str(visitor)) == True
 
-       def checkVisitor(i):
-              return memberStatus.get(str(i)) == False or (not(i in memberStatus.keys()))
+       def checkVisitor(visitor):
+              return memberStatus.get(str(visitor)) == False or (not(visitor in memberStatus.keys()))
         
 
        Members = list(filter(checkMember, allowedVisitors))
@@ -62,9 +62,9 @@ def processRequest(request):
        result["successfulApplicants"] = Members + Visitors
        
    # 3. calculate total price
-       totalprice = len(Members) * 3.50 + len(Visitors) * 5.00
-       totalpricedisplay = "$" + str(totalprice)
-       result["totalCost"] = totalpricedisplay
+       total_price = len(Members) * 3.50 + len(Visitors) * 5.00
+       total_price_display = "$" + str(total_price)
+       result["totalCost"] = total_price_display
   
        ticket = result["tickets"]
    # 4. issue tickets
@@ -75,7 +75,7 @@ def processRequest(request):
             ticket.append({"name": i, "membershipStatus": "Visitor", "price": "$5.00"})
 
    # 5. throw error if applicant is empty
-    elif (len(allapplicants) == 0):
+    elif (len(allApplicants) == 0):
         error =  {"error": "No applicants"}
         return error
        
