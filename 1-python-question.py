@@ -23,9 +23,11 @@ request = {
     "applicants": ["Amy", "Ally", "David", "Brendan", "Zoho"]
 }
 
-allApplicants = request["applicants"]
+
 
 def processRequest(request):
+
+    allApplicants = request["applicants"]
 
     result =  {
    "successfulApplicants": [],
