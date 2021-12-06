@@ -39,14 +39,14 @@ def processRequest(request):
   
     if (not(len(allapplicants) == 0)):
        def checkBan(i):
-          return ((i in bannedVisitors) == True)
+          return i in bannedVisitors
        
 
        result["bannedApplicants"] = list(filter(checkBan, allapplicants))
    
    # 2. check applicants' membership status
        def checkAllow(i):
-           return ((i in bannedVisitors) == False)
+           return i not in bannedVisitors
 
        allowedVisitors = list(filter(checkAllow, allapplicants))
 
